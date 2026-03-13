@@ -46,23 +46,23 @@ export const skills = [
 
 export const projects = [
   {
-    name: "ReaIV2",
+    name: "RAI V2",
     description: "Advanced real-time interactive application built with modern web technologies",
-    tech: ["TypeScript", "React", "Node.js"],
+    tech: ["Machine Learning", "Blockchain"],
     forks: 0,
     url: "https://github.com/v3nom-95",
   },
   {
     name: "SurakshaNet",
     description: "Security-focused network monitoring and protection platform",
-    tech: ["Python", "React", "Web3"],
+    tech: ["Web Development", "Blockchain", "Quantum Cryptography"],
     forks: 0,
     url: "https://github.com/v3nom-95",
   },
   {
     name: "Doc Verification",
     description: "Blockchain-based document verification and authentication system",
-    tech: ["Solidity", "React", "IPFS"],
+    tech: ["Python", "Deep Learning", "Machine Learning", "CNN"],
     forks: 0,
     url: "https://github.com/v3nom-95",
   },
