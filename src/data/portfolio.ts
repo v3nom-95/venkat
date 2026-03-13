@@ -47,21 +47,21 @@ export const skills = [
 export const projects = [
   {
     name: "REAI V2",
-    description: "Responsible AI platform built with blockchain and machine learning for ethical, transparent decentralized intelligence.",
+    description: "Responsible AI platform built with blockchain and machine learning for ethical,decentralized intelligence.",
     tech: ["Machine Learning", "Blockchain"],
     forks: 0,
     url: "https://github.com/v3nom-95/reaiv2",
   },
   {
     name: "SurakshaNet",
-    description: "Ayushman Bharat fraud detection agent utilizing blockchain and quantum cryptography for secure healthcare claim surveillance.",
+    description: "Ayushman Bharat fraud detection agent utilizing blockchain and quantum cryptography.",
     tech: ["Web Development", "Blockchain", "Quantum Cryptography"],
     forks: 0,
     url: "https://github.com/v3nom-95/SurakshaNet",
   },
   {
     name: "Doc Verification",
-    description: "Deep-learning powered document verification system using Convolutional Neural Networks and YOLO v8 for high-fidelity authentication.",
+    description: "Deep-learning powered document verification system using Convolutional Neural Networks and YOLO v8.",
     tech: ["Python", "Deep Learning", "Machine Learning", "CNN"],
     forks: 0,
     url: "https://github.com/v3nom-95/doc-verification",

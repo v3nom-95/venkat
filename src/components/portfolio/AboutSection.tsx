@@ -25,16 +25,16 @@ const AboutSection = () => {
     <section id="about" ref={containerRef} className="relative py-32 overflow-hidden bg-background/50">
       {/* Background Decorative Elements - Keep subtle blur but no complex orbits */}
       <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
-        <motion.div 
+        <motion.div
           style={{ y: y1 }}
-          className="absolute top-1/4 left-10 w-96 h-96 bg-primary/10 rounded-full blur-[120px]" 
+          className="absolute top-1/4 left-10 w-96 h-96 bg-primary/10 rounded-full blur-[120px]"
         />
-        <motion.div 
+        <motion.div
           style={{ y: y2 }}
-          className="absolute bottom-1/4 right-10 w-96 h-96 bg-accent-blue/10 rounded-full blur-[120px]" 
+          className="absolute bottom-1/4 right-10 w-96 h-96 bg-accent-blue/10 rounded-full blur-[120px]"
         />
       </div>
-      
+
       <div className="container relative z-10 mx-auto px-6">
         <div className="grid lg:grid-cols-1 gap-16 items-start">
           {/* Centered Header & Bio */}
@@ -102,7 +102,7 @@ const AboutSection = () => {
                       {cat.label}
                     </h3>
                   </div>
-                  
+
                   <div className="flex flex-wrap gap-2">
                     {skills
                       .filter((s) => s.category === cat.key)
