@@ -95,7 +95,8 @@ const Navbar = () => {
             
             {/* Mobile Resume Icon - Joined into the same flow to stay centered */}
             <motion.a
-              href={`mailto:${personalInfo.email}?subject=Resume Request`}
+              href="/venkat.pdf"
+              download
               className="md:hidden relative px-3 py-2 rounded-[1.25rem] flex items-center justify-center text-primary hover:text-white transition-colors"
               whileTap={{ scale: 0.9 }}
             >
@@ -107,7 +108,8 @@ const Navbar = () => {
 
           {/* Premium Resume Button - DESKTOP ONLY */}
           <motion.a
-            href={`mailto:${personalInfo.email}?subject=Resume Request`}
+            href="/venkat.pdf"
+            download
             className="hidden md:flex whitespace-nowrap px-6 py-2.5 rounded-2xl text-[10px] font-bold tracking-[0.25em] text-primary border border-primary/20 items-center gap-2 ml-1 relative overflow-hidden group"
             style={{
               background: "rgba(59, 130, 246, 0.03)",
