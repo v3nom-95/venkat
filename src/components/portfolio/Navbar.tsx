@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, useRef } from "react";
+import { motion, useMotionValue, useSpring } from "framer-motion";
 import { Home, User, Briefcase, Mail, FileDown } from "lucide-react";
 import { personalInfo } from "@/data/portfolio";
 
@@ -10,128 +10,261 @@ const links = [
   { label: "Contact", href: "#contact", icon: Mail },
 ];
 
-const Navbar = () => {
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+const springConfig = { type: "spring", stiffness: 450, damping: 30, mass: 0.8 };
+const magneticSpring = { stiffness: 150, damping: 15, mass: 0.1 };
+
+// 🔥 Magnetic button effect using motion values (NO JITTER!)
+function NavItem({ link, index, isExpanded, hoveredIndex, setHoveredIndex }: any) {
+  const isActive = hoveredIndex === index;
+  const ref = useRef<HTMLAnchorElement>(null);
+
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+
+  const springX = useSpring(x, magneticSpring);
+  const springY = useSpring(y, magneticSpring);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (!ref.current) return;
+    const { clientX, clientY } = e;
+    const { height, width, left, top } = ref.current.getBoundingClientRect();
+    const middleX = clientX - (left + width / 2);
+    const middleY = clientY - (top + height / 2);
+    x.set(middleX * 0.2);
+    y.set(middleY * 0.2);
+  };
+
+  const handleMouseLeave = () => {
+    x.set(0);
+    y.set(0);
+  };
 
   return (
-    <>
+    <motion.a
+      ref={ref}
+      href={link.href}
+      onMouseEnter={() => setHoveredIndex(index)}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      className="relative flex items-center justify-center rounded-full cursor-pointer z-20"
+      initial={false}
+      animate={{
+        padding: isExpanded ? "10px 20px" : "12px",
+      }}
+      style={{
+        x: springX,
+        y: springY,
+      }}
+      transition={springConfig}
+    >
+      <motion.div 
+         className="relative z-20 flex items-center justify-center gap-2"
+         animate={{
+           color: isActive ? "#ffffff" : "rgba(255,255,255,0.6)",
+           scale: isActive ? 1.15 : 1,
+         }}
+         transition={springConfig}
+      >
+        <link.icon size={isExpanded ? 18 : 20} className="transition-all duration-300" />
+        
+        <motion.div
+           initial={false}
+           animate={{
+               width: isExpanded ? "auto" : 0,
+               opacity: isExpanded ? 1 : 0,
+           }}
+           transition={springConfig}
+           className="overflow-hidden whitespace-nowrap hidden md:flex items-center"
+        >
+          <span className="text-sm font-semibold tracking-tight ml-1">{link.label}</span>
+        </motion.div>
+      </motion.div>
+
+      {/* Floating active background pill */}
+      {isActive && (
+        <motion.div
+           layoutId="active-pill"
+           className="absolute inset-0 rounded-full -z-10 bg-white/10"
+           style={{
+             boxShadow: "inset 0 1px 1px rgba(255, 255, 255, 0.15), 0 4px 12px rgba(0,0,0,0.2)",
+             backdropFilter: "blur(12px)"
+           }}
+           transition={{ type: "spring", stiffness: 450, damping: 35, mass: 0.6 }}
+        />
+      )}
+    </motion.a>
+  );
+}
+
+// 🔥 Specialized resume button 
+function ResumeButton({ isExpanded, setHoveredIndex, hoveredIndex }: any) {
+  const isActive = hoveredIndex === 99;
+  const ref = useRef<HTMLAnchorElement>(null);
+
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+
+  const springX = useSpring(x, magneticSpring);
+  const springY = useSpring(y, magneticSpring);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (!ref.current) return;
+    const { clientX, clientY } = e;
+    const { height, width, left, top } = ref.current.getBoundingClientRect();
+    const middleX = clientX - (left + width / 2);
+    const middleY = clientY - (top + height / 2);
+    x.set(middleX * 0.2);
+    y.set(middleY * 0.2);
+  };
+
+  return (
+    <motion.a
+      ref={ref}
+      href="/venkat.pdf"
+      download
+      onMouseEnter={() => setHoveredIndex(99)}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={() => { x.set(0); y.set(0); }}
+      className="relative hidden md:flex items-center justify-center rounded-full cursor-pointer z-20 group"
+      initial={false}
+      animate={{
+        padding: isExpanded ? "10px 24px" : "12px",
+        background: isActive ? "rgba(59, 130, 246, 0.15)" : "rgba(59, 130, 246, 0.05)",
+        border: isActive ? "1px solid rgba(59, 130, 246, 0.5)" : "1px solid rgba(59, 130, 246, 0.2)",
+        marginLeft: isExpanded ? 4 : 0,
+      }}
+      style={{
+        x: springX,
+        y: springY,
+      }}
+      transition={springConfig}
+    >
+       <div className="absolute inset-0 rounded-full overflow-hidden">
+          <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+       </div>
+       
+       <motion.div 
+         className="relative z-20 flex items-center justify-center gap-2"
+         animate={{ 
+           color: isActive ? "#ffffff" : "rgba(255,255,255,0.8)",
+           scale: isActive ? 1.05 : 1
+         }}
+         transition={springConfig}
+       >
+         <FileDown size={isExpanded ? 16 : 20} className={isExpanded ? "group-hover:-translate-y-0.5 transition-transform duration-300" : ""} />
+         <motion.div
+           initial={false}
+           animate={{
+               width: isExpanded ? "auto" : 0,
+               opacity: isExpanded ? 1 : 0,
+           }}
+           transition={springConfig}
+           className="overflow-hidden whitespace-nowrap flex items-center"
+        >
+           <span className="text-[11px] font-bold tracking-[0.2em] ml-1">RESUME</span>
+        </motion.div>
+       </motion.div>
+
+       {/* The same active pill glides to the resume button! */}
+       {isActive && (
+        <motion.div
+           layoutId="active-pill"
+           className="absolute inset-0 rounded-full -z-10"
+           transition={{ type: "spring", stiffness: 450, damping: 35, mass: 0.6 }}
+        />
+      )}
+    </motion.a>
+  );
+}
+
+const Navbar = () => {
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  return (
+    <div className="fixed bottom-6 w-full flex justify-center z-50 pointer-events-none px-4">
+      {/* 🚀 The dynamic island orchestrator */}
       <motion.nav
-        initial={{ y: 50, x: "-50%", opacity: 0 }}
-        animate={{ y: 0, x: "-50%", opacity: 1 }}
-        transition={{ type: "spring", stiffness: 80, damping: 20, delay: 0.5 }}
-        className="fixed bottom-6 left-1/2 z-50 glass-strong rounded-[2.5rem] px-2 py-2 md:px-5 md:py-2.5 border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.6)] backdrop-blur-[40px] w-[92%] max-w-fit flex items-center overflow-visible"
-        onMouseLeave={() => setHoveredIndex(null)}
+        onMouseEnter={() => setIsExpanded(true)}
+        onMouseLeave={() => {
+          setIsExpanded(false);
+          setHoveredIndex(null);
+        }}
+        initial={{ y: 50, opacity: 0 }}
+        animate={{ 
+          y: 0, 
+          opacity: 1,
+          padding: isExpanded ? "12px 16px" : "8px 12px",
+          gap: isExpanded ? "8px" : "4px",
+          boxShadow: isExpanded 
+            ? "inset 0 1px 1px rgba(255, 255, 255, 0.15), 0 30px 60px rgba(0, 0, 0, 0.5)"
+            : "inset 0 1px 1px rgba(255, 255, 255, 0.1), 0 10px 30px rgba(0, 0, 0, 0.3)"
+        }}
+        transition={springConfig}
+        className="pointer-events-auto relative flex items-center shadow-2xl glass-strong border border-white/10 overflow-hidden"
         style={{
-          background: "rgba(255, 255, 255, 0.03)",
-          boxShadow: "inset 0 0 0 1px rgba(255, 255, 255, 0.08), 0 20px 50px rgba(0, 0, 0, 0.4)",
+          borderRadius: 100,
+          background: "rgba(10, 10, 10, 0.45)",
+          backdropFilter: "blur(24px)",
+          WebkitBackdropFilter: "blur(24px)",
         }}
       >
-        <div className="flex items-center gap-1 md:gap-3 w-full justify-center">
-          {/* Logo - Hidden on mobile to save space */}
-          <motion.a
-            href="#home"
-            className="hidden lg:flex items-center justify-center text-foreground font-bold text-xl tracking-tighter mr-4 p-2 transition-opacity hover:opacity-80"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            VB<span className="text-primary">.</span>
-          </motion.a>
+        <motion.a
+          href="#home"
+          initial={false}
+          animate={{ 
+            opacity: isExpanded ? 1 : 0, 
+            width: isExpanded ? "auto" : 0, 
+            scale: isExpanded ? 1 : 0.5, 
+            marginRight: isExpanded ? 12 : 0 
+          }}
+          className="lg:flex items-center justify-center font-bold text-xl tracking-tighter ml-2 overflow-hidden whitespace-nowrap text-white"
+          style={{ display: isExpanded ? "flex" : "none" }}
+          transition={springConfig}
+        >
+          VB<span className="text-primary">.</span>
+        </motion.a>
 
-          {/* Ultra-Smooth Glassy Links */}
-          <div className="flex items-center gap-0.5 md:gap-1 relative">
-            {links.map((link, index) => {
-              const isActive = hoveredIndex === index;
-              return (
-                <motion.a
-                  key={link.href}
-                  href={link.href}
-                  onMouseEnter={() => setHoveredIndex(index)}
-                  className="relative px-3 py-2 md:px-6 md:py-2.5 rounded-[1.25rem] flex items-center justify-center transition-all duration-500"
-                  animate={{
-                    scale: isActive ? 1.02 : 1,
-                  }}
-                >
-                  {/* Desktop Label */}
-                  <span 
-                    className={`relative z-20 text-sm font-semibold tracking-tight transition-all duration-300 hidden md:block ${
-                      isActive ? "text-white" : "text-white/40 hover:text-white/70"
-                    }`}
-                  >
-                    {link.label}
-                  </span>
-                  
-                  {/* Mobile Icons */}
-                  <div className="md:hidden relative z-20">
-                    <link.icon 
-                      size={20} 
-                      className={`transition-all duration-300 ${isActive ? "text-white" : "text-white/40"}`} 
-                    />
-                  </div>
+        {links.map((link, i) => (
+          <NavItem
+            key={link.label}
+            link={link}
+            index={i}
+            isExpanded={isExpanded}
+            hoveredIndex={hoveredIndex}
+            setHoveredIndex={setHoveredIndex}
+          />
+        ))}
 
-                  {/* Refined Sliding Glass Pill */}
-                  {isActive && (
-                    <motion.div
-                      layoutId="nav-pill-bg"
-                      className="absolute inset-0 z-10 rounded-[1.125rem]"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      style={{
-                        background: "rgba(255, 255, 255, 0.08)",
-                        border: "1px solid rgba(255, 255, 255, 0.15)",
-                        backdropFilter: "blur(10px)",
-                      }}
-                      transition={{ 
-                        type: "spring", 
-                        stiffness: 400, 
-                        damping: 35,
-                        mass: 0.8
-                      }}
-                    />
-                  )}
-                </motion.a>
-              );
-            })}
-            
-            {/* Mobile Resume Icon - Joined into the same flow to stay centered */}
-            <motion.a
-              href="/venkat.pdf"
-              download
-              className="md:hidden relative px-3 py-2 rounded-[1.25rem] flex items-center justify-center text-primary hover:text-white transition-colors"
-              whileTap={{ scale: 0.9 }}
-            >
-              <FileDown size={20} />
-            </motion.a>
-          </div>
-
-          <div className="w-px h-6 bg-white/10 mx-2 opacity-20 hidden md:block" />
-
-          {/* Premium Resume Button - DESKTOP ONLY */}
-          <motion.a
+        {/* Mobile Resume Icon */}
+        <motion.a
             href="/venkat.pdf"
             download
-            className="hidden md:flex whitespace-nowrap px-6 py-2.5 rounded-2xl text-[10px] font-bold tracking-[0.25em] text-primary border border-primary/20 items-center gap-2 ml-1 relative overflow-hidden group"
-            style={{
-              background: "rgba(59, 130, 246, 0.03)",
-              backdropFilter: "blur(12px)",
+            className="md:hidden relative px-3 py-2 rounded-full flex items-center justify-center text-primary hover:text-white transition-colors z-20"
+            whileTap={{ scale: 0.85 }}
+            animate={{ scale: isExpanded ? 1.1 : 1 }}
+        >
+            <FileDown size={20} />
+        </motion.a>
+
+        {/* Divider */}
+        <motion.div 
+            className="w-px bg-white/10 hidden md:block" 
+            animate={{ 
+              height: isExpanded ? 32 : 24,
+              opacity: isExpanded ? 0.4 : 0.2,
+              margin: isExpanded ? "0 8px" : "0 4px"
             }}
-            whileHover={{ 
-                scale: 1.02,
-                backgroundColor: "rgba(59, 130, 246, 0.08)",
-                borderColor: "rgba(59, 130, 246, 0.4)",
-            }}
-            whileTap={{ scale: 0.98 }}
-            transition={{ type: "spring", stiffness: 400, damping: 30 }}
-          >
-            {/* Shimmer effect */}
-            <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/5 to-transparent" />
-            
-            <FileDown size={14} className="group-hover:translate-y-[-1px] transition-transform" />
-            <span>RESUME</span>
-          </motion.a>
-        </div>
+            transition={springConfig}
+         />
+
+        <ResumeButton 
+          isExpanded={isExpanded} 
+          setHoveredIndex={setHoveredIndex} 
+          hoveredIndex={hoveredIndex} 
+        />
       </motion.nav>
-    </>
+    </div>
   );
 };
 

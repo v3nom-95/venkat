@@ -2,6 +2,8 @@ import { motion } from "framer-motion";
 import { Mail, Github, Linkedin } from "lucide-react";
 import { personalInfo } from "@/data/portfolio";
 
+const premiumSpring = { type: "spring", stiffness: 400, damping: 35, mass: 0.8 };
+
 const ContactSection = () => {
   const contactLinks = [
     { 
@@ -34,10 +36,10 @@ const ContactSection = () => {
 
       <div className="container relative z-10 mx-auto px-6 max-w-5xl">
         <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ type: "spring", stiffness: 60 }}
+          initial={{ opacity: 0, y: 50, filter: "blur(10px)", scale: 0.95 }}
+          whileInView={{ opacity: 1, y: 0, filter: "blur(0px)", scale: 1 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ ...premiumSpring, duration: 0.8 }}
           className="mb-16 text-center"
         >
           <div className="inline-block px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-mono mb-6">
@@ -59,22 +61,24 @@ const ContactSection = () => {
               href={href}
               target="_blank"
               rel="noopener noreferrer"
-              className="group relative flex flex-col items-center justify-center gap-4 glass-strong rounded-[2.5rem] p-8 text-center transition-all border-white/5 hover:border-primary/20 overflow-hidden"
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-              whileHover={{ y: -8 }}
+              className="group relative flex flex-col items-center justify-center gap-4 glass-strong rounded-[2.5rem] p-8 text-center transition-colors duration-300 border border-white/5 hover:border-primary/30 overflow-hidden"
+              initial={{ opacity: 0, y: 40, filter: "blur(10px)", scale: 0.9 }}
+              whileInView={{ opacity: 1, y: 0, filter: "blur(0px)", scale: 1 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ delay: i * 0.1, ...premiumSpring }}
+              whileHover={{ y: -8, boxShadow: "0 20px 40px -10px rgba(0,0,0,0.5)" }}
+              whileTap={{ scale: 0.95 }}
+              style={{ backfaceVisibility: "hidden" }}
             >
-              <div className="absolute inset-0 bg-gradient-to-br transition-opacity opacity-0 group-hover:opacity-100" 
+              <div className="absolute inset-0 bg-gradient-to-br transition-opacity opacity-0 group-hover:opacity-100 duration-500" 
                    style={{ backgroundImage: `radial-gradient(circle at center, ${color}15 0%, transparent 70%)` }} 
               />
               
-              <div className="relative z-10 glass-subtle rounded-3xl p-5 group-hover:scale-110 transition-transform">
-                <Icon size={32} style={{ color: color }} />
+              <div className="relative z-10 glass-subtle rounded-3xl p-5 group-hover:scale-110 group-hover:bg-primary/10 transition-transform duration-300">
+                <Icon size={32} style={{ color: color }} className="transition-transform duration-300 group-hover:scale-110" />
               </div>
-              <div className="relative z-10 flex flex-col items-center">
-                <div className="text-sm font-bold text-foreground group-hover:text-primary transition-colors tracking-widest uppercase mb-1">
+              <div className="relative z-10 flex flex-col items-center mt-2 group-hover:-translate-y-1 transition-transform duration-300">
+                <div className="text-sm font-bold text-foreground tracking-widest uppercase mb-1">
                   {label}
                 </div>
               </div>
